@@ -4,7 +4,7 @@ version: '2'
 services:
   # ELK
     elasticdata:
-      image: elasticsearch:1.7.0
+      image: elasticsearch:5.2.1
       container_name: elasticdata
       volumes:
         - elasticsearch-data:/var/lib/elasticsearch/data
@@ -12,8 +12,10 @@ services:
       command: chown elasticsearch:elasticsearch /var/lib/elasticsearch/logs /var/lib/elasticsearch/data
 
     elasticsearch:
-      image: elasticsearch:1.7.0
+      image: elasticsearch:5.2.1
       container_name: elasticsearch
+      ports:
+        - "9200:9200"
       volumes_from:
         - elasticdata
       volumes:
@@ -34,7 +36,7 @@ services:
         - logging
 
     kibana:
-      image: kibana:4.1.1
+      image: kibana:5.2.1
       container_name: kibana
       environment:
         - ELASTICSEARCH_URL=http://elasticsearch:9200
@@ -45,10 +47,12 @@ services:
         - logging
 
     logstash:
-      image: logstash:1.5.3
+      image: logstash:5.2.1
       container_name: logstash
+      depends_on:
+        - elasticsearch
       ports:
-        - "5000:5000/udp"
+        - "5000:5000"
       volumes:
         - $PWD/conf-files/logstash-conf:/opt/logstash/conf.d
       command: -f /opt/logstash/conf.d/logstash.conf
