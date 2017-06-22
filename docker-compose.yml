@@ -53,6 +53,7 @@ services:
         - elasticsearch
       ports:
         - "5000:5000"
+        - "5001:5001"
       volumes:
         - $PWD/conf-files/logstash-conf:/opt/logstash/conf.d
       command: -f /opt/logstash/conf.d/logstash.conf
